@@ -9,8 +9,8 @@ public record PetPhoto
         Path = path;
         IsMain = isMain;
     }
-    public string Path { get; set; } = default!;
-    public bool IsMain { get; set; } = default!;
+    public string Path { get; } = default!;
+    public bool IsMain { get; } = default!;
 
     public static Result<PetPhoto> Create(string path, bool isMain)
     {
