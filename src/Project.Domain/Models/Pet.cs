@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Project.Domain.Shared;
 using Project.Domain.ValueObjects;
 
 namespace Project.Domain.Models
@@ -7,6 +8,8 @@ namespace Project.Domain.Models
     {
         private readonly List<Requisite> _requisites = [];
         private readonly List<PetPhoto> _photos = [];
+
+        public Pet() {}
 
         private Pet(
             string name,
@@ -24,7 +27,8 @@ namespace Project.Domain.Models
             PetHelpStatus helpStatus,
             List<Requisite> requisites,
             List<PetPhoto> photos,
-            DateTime dateCreate
+            DateTime dateCreate,
+            Volunteer volunteer
             )
         {
             Name = name;
@@ -43,6 +47,7 @@ namespace Project.Domain.Models
             _requisites = requisites;
             _photos = photos;
             DateCreate = dateCreate;
+            Volunteer = volunteer;
         }
 
         public Guid Id { get; set; }
@@ -63,6 +68,7 @@ namespace Project.Domain.Models
         public List<Requisite> Requisites => _requisites;
         public List<PetPhoto> Photos => _photos;
         public DateTime DateCreate { get; private set; } = default!;
+        public Volunteer Volunteer { get; private set; } = default!;
 
         public static Result<Pet> Create(
             string name,
@@ -80,7 +86,8 @@ namespace Project.Domain.Models
             PetHelpStatus helpStatus,
             List<Requisite> requisites,
             List<PetPhoto> photos,
-            DateTime dateCreate
+            DateTime dateCreate,
+            Volunteer volunteer
             )
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -107,15 +114,15 @@ namespace Project.Domain.Models
             {
                 return Result.Failure<Pet>("HealthInfo cannot be empty");
             }
-            if (weight < 0)
+            if (weight < 0 && weight > Constants.PET_MAX_WEIGHT)
             {
-                return Result.Failure<Pet>("Weight cannot be less then zero");
+                return Result.Failure<Pet>($"Weight cannot be less then zero or bigger then {Constants.PET_MAX_WEIGHT} kg");
             }
-            if (height < 0)
+            if (height < 0 && height > Constants.PET_MAX_HEIGHT)
             {
-                return Result.Failure<Pet>("Height cannot be less then zero");
+                return Result.Failure<Pet>($"Height cannot be less then zero or bigger then {Constants.PET_MAX_HEIGHT} cm");
             }
-            if (string.IsNullOrWhiteSpace(phone) || phone.Length != "+79999999999".Length)
+            if (string.IsNullOrWhiteSpace(phone) || phone.Length != Constants.PHONE_LENGTH)
             {
                 return Result.Failure<Pet>("Phone cannot be empty or phone should be format +7xxxxxxxxxx");
             }
@@ -144,7 +151,8 @@ namespace Project.Domain.Models
                 helpStatus,
                 requisites,
                 photos,
-                dateCreate
+                dateCreate,
+                volunteer
                 );
         }
     }
