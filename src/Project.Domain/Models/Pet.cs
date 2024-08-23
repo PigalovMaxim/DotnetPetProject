@@ -27,8 +27,7 @@ namespace Project.Domain.Models
             PetHelpStatus helpStatus,
             List<Requisite> requisites,
             List<PetPhoto> photos,
-            DateTime dateCreate,
-            Volunteer volunteer
+            DateTime dateCreate
             )
         {
             Name = name;
@@ -47,7 +46,6 @@ namespace Project.Domain.Models
             _requisites = requisites;
             _photos = photos;
             DateCreate = dateCreate;
-            Volunteer = volunteer;
         }
 
         public Guid Id { get; set; }
@@ -68,7 +66,6 @@ namespace Project.Domain.Models
         public List<Requisite> Requisites => _requisites;
         public List<PetPhoto> Photos => _photos;
         public DateTime DateCreate { get; private set; } = default!;
-        public Volunteer Volunteer { get; private set; } = default!;
 
         public static Result<Pet> Create(
             string name,
@@ -86,8 +83,7 @@ namespace Project.Domain.Models
             PetHelpStatus helpStatus,
             List<Requisite> requisites,
             List<PetPhoto> photos,
-            DateTime dateCreate,
-            Volunteer volunteer
+            DateTime dateCreate
             )
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -151,8 +147,7 @@ namespace Project.Domain.Models
                 helpStatus,
                 requisites,
                 photos,
-                dateCreate,
-                volunteer
+                dateCreate
                 );
         }
     }

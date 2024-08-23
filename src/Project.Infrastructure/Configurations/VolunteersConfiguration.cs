@@ -56,9 +56,5 @@ public class VolunteersConfiguration : IEntityTypeConfiguration<Volunteer>
             vb.Property(vs => vs.Link)
                 .IsRequired();
         });
-
-        builder
-            .HasMany(b => b.Pets)
-            .WithOne(p => p.Volunteer);
     }
 }

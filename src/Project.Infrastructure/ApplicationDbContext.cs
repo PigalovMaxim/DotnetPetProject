@@ -7,8 +7,6 @@ namespace Project.Infrastructure;
 public class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
-
-    public DbSet<Pet> Pets => Set<Pet>();
     public DbSet<Volunteer> Volunteers => Set<Volunteer>();
 
     public ApplicationDbContext(IConfiguration configuration)

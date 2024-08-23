@@ -30,7 +30,7 @@ namespace Project.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "pets",
+                name: "pet",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -49,24 +49,23 @@ namespace Project.Infrastructure.Migrations
                     isVaccinated = table.Column<bool>(type: "boolean", nullable: false),
                     helpStatus = table.Column<int>(type: "integer", nullable: false),
                     dateCreate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    volunteerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    volunteerId = table.Column<Guid>(type: "uuid", nullable: true),
                     photos = table.Column<string>(type: "jsonb", nullable: true),
                     requisites = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_pets", x => x.id);
+                    table.PrimaryKey("pK_pet", x => x.id);
                     table.ForeignKey(
-                        name: "fK_pets_volunteers_volunteerId",
+                        name: "fK_pet_volunteers_volunteerId",
                         column: x => x.volunteerId,
                         principalTable: "volunteers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "iX_pets_volunteerId",
-                table: "pets",
+                name: "iX_pet_volunteerId",
+                table: "pet",
                 column: "volunteerId");
         }
 
@@ -74,7 +73,7 @@ namespace Project.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "pets");
+                name: "pet");
 
             migrationBuilder.DropTable(
                 name: "volunteers");

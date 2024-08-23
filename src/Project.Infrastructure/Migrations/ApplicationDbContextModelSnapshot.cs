@@ -102,7 +102,7 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("species");
 
-                    b.Property<Guid>("VolunteerId")
+                    b.Property<Guid?>("VolunteerId")
                         .HasColumnType("uuid")
                         .HasColumnName("volunteerId");
 
@@ -112,12 +112,12 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("weight");
 
                     b.HasKey("Id")
-                        .HasName("pK_pets");
+                        .HasName("pK_pet");
 
                     b.HasIndex("VolunteerId")
-                        .HasDatabaseName("iX_pets_volunteerId");
+                        .HasDatabaseName("iX_pet_volunteerId");
 
-                    b.ToTable("pets", (string)null);
+                    b.ToTable("pet", (string)null);
                 });
 
             modelBuilder.Entity("Project.Domain.Models.Volunteer", b =>
@@ -164,12 +164,10 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Domain.Models.Pet", b =>
                 {
-                    b.HasOne("Project.Domain.Models.Volunteer", "Volunteer")
+                    b.HasOne("Project.Domain.Models.Volunteer", null)
                         .WithMany("Pets")
                         .HasForeignKey("VolunteerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fK_pets_volunteers_volunteerId");
+                        .HasConstraintName("fK_pet_volunteers_volunteerId");
 
                     b.OwnsMany("Project.Domain.ValueObjects.Requisite", "Requisites", b1 =>
                         {
@@ -191,15 +189,15 @@ namespace Project.Infrastructure.Migrations
                                 .HasColumnType("character varying(100)");
 
                             b1.HasKey("PetId", "Id")
-                                .HasName("pK_pets");
+                                .HasName("pK_pet");
 
-                            b1.ToTable("pets");
+                            b1.ToTable("pet");
 
                             b1.ToJson("requisites");
 
                             b1.WithOwner()
                                 .HasForeignKey("PetId")
-                                .HasConstraintName("fK_pets_pets_PetId");
+                                .HasConstraintName("fK_pet_pet_PetId");
                         });
 
                     b.OwnsMany("Project.Domain.ValueObjects.PetPhoto", "Photos", b1 =>
@@ -220,20 +218,18 @@ namespace Project.Infrastructure.Migrations
 
                             b1.HasKey("PetId", "Id");
 
-                            b1.ToTable("pets");
+                            b1.ToTable("pet");
 
                             b1.ToJson("photos");
 
                             b1.WithOwner()
                                 .HasForeignKey("PetId")
-                                .HasConstraintName("fK_pets_pets_PetId");
+                                .HasConstraintName("fK_pet_pet_PetId");
                         });
 
                     b.Navigation("Photos");
 
                     b.Navigation("Requisites");
-
-                    b.Navigation("Volunteer");
                 });
 
             modelBuilder.Entity("Project.Domain.Models.Volunteer", b =>
