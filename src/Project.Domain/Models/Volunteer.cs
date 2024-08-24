@@ -1,23 +1,24 @@
 ﻿using CSharpFunctionalExtensions;
+using Project.Domain.Models.ModelsId;
 using Project.Domain.ValueObjects;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Domain.Models;
 
-public class Volunteer
+public class Volunteer: Shared.Entity<VolunteerId>
 {
     private readonly List<SocialMedia> _socials = [];
     private readonly List<Requisite> _requisites = [];
     private readonly List<Pet> _pets = [];
 
-    public Volunteer() { }
+    public Volunteer(): base() { }
     private Volunteer(
-            string firstName,
-            string middleName,
-            string lastName,
-            string email,
-            byte experience
-            )
+        VolunteerId id,
+        string firstName,
+        string middleName,
+        string lastName,
+        string email,
+        byte experience
+        ) : base(id)
     {
         FirstName = firstName;
         MiddleName = middleName;
@@ -25,7 +26,6 @@ public class Volunteer
         Email = email;
         Experience = experience;
     }
-    public Guid Id { get; set; }
     public string FirstName { get; private set; } = default!;
     public string MiddleName { get; private set; } = default!;
     public string LastName { get; private set; } = default!;
@@ -39,12 +39,13 @@ public class Volunteer
     public int SeeksHomePetsCount() => _pets.Select(x => x.HelpStatus == PetHelpStatus.SeeksAHome).Count();
 
     public static Result<Volunteer> Create(
-            string firstName,
-            string middleName,
-            string lastName,
-            string email,
-            byte experience
-            )
+        VolunteerId id,
+        string firstName,
+        string middleName,
+        string lastName,
+        string email,
+        byte experience
+        )
     {
         if (string.IsNullOrWhiteSpace(firstName))
         {
@@ -68,6 +69,7 @@ public class Volunteer
         }
 
         return new Volunteer(
+            id,
             firstName,
             middleName,
             lastName,

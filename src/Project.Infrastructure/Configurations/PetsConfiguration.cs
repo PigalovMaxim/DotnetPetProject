@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Domain.Models;
+using Project.Domain.Models.ModelsId;
 using Project.Domain.Shared;
 
 namespace Project.Infrastructure.Configurations;
@@ -10,6 +11,12 @@ public class PetsConfiguration : IEntityTypeConfiguration<Pet>
     public void Configure(EntityTypeBuilder<Pet> builder)
     {
         builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Id)
+            .HasConversion(
+                id => id.Value,
+                value => PetId.Create(value)
+            );
 
         builder.Property(p => p.Name)
             .IsRequired()
