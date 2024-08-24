@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Project.Domain.ValueObjects;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Domain.Models;
 
@@ -9,6 +10,7 @@ public class Volunteer
     private readonly List<Requisite> _requisites = [];
     private readonly List<Pet> _pets = [];
 
+    public Volunteer() { }
     private Volunteer(
             string firstName,
             string middleName,
@@ -27,7 +29,6 @@ public class Volunteer
     public string FirstName { get; private set; } = default!;
     public string MiddleName { get; private set; } = default!;
     public string LastName { get; private set; } = default!;
-    public string FullName => $"{FirstName} {MiddleName} {LastName}";
     public string Email { get; private set; } = default!;
     public byte Experience { get; private set; } = default!;
     public List<SocialMedia> Socials => _socials;
