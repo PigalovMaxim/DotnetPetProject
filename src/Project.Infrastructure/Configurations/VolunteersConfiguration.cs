@@ -1,16 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Domain.Models;
+using Project.Domain.Models.ModelsId;
 using Project.Domain.Shared;
 
 namespace Project.Infrastructure.Configurations;
-
 
 public class VolunteersConfiguration : IEntityTypeConfiguration<Volunteer>
 {
     public void Configure(EntityTypeBuilder<Volunteer> builder)
     {
+        builder.ToTable("volunteers");
+
         builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Id)
+            .HasConversion(
+                id => id.Value,
+                value => VolunteerId.Create(value)
+            );
 
         builder.Property(p => p.FirstName)
             .IsRequired()
