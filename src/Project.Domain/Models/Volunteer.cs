@@ -13,22 +13,16 @@ public class Volunteer: Shared.Entity<VolunteerId>
     public Volunteer(): base() { }
     private Volunteer(
         VolunteerId id,
-        string firstName,
-        string middleName,
-        string lastName,
+        FullName fullName,
         string email,
         byte experience
         ) : base(id)
     {
-        FirstName = firstName;
-        MiddleName = middleName;
-        LastName = lastName;
+        FullName = fullName;
         Email = email;
         Experience = experience;
     }
-    public string FirstName { get; private set; } = default!;
-    public string MiddleName { get; private set; } = default!;
-    public string LastName { get; private set; } = default!;
+    public FullName FullName { get; private set; }
     public string Email { get; private set; } = default!;
     public byte Experience { get; private set; } = default!;
     public List<SocialMedia> Socials => _socials;
@@ -51,28 +45,37 @@ public class Volunteer: Shared.Entity<VolunteerId>
         {
             return Result.Failure<Volunteer>("FirstName cannot be empty");
         }
+
         if (string.IsNullOrWhiteSpace(middleName))
         {
             return Result.Failure<Volunteer>("MiddleName cannot be empty");
         }
+
         if (string.IsNullOrWhiteSpace(lastName))
         {
             return Result.Failure<Volunteer>("LastName cannot be empty");
         }
+
         if (string.IsNullOrWhiteSpace(email))
         {
             return Result.Failure<Volunteer>("Email cannot be empty");
         }
+
         if (experience < 0)
         {
             return Result.Failure<Volunteer>("Experience cannot be less then zero");
         }
 
+        var fullName = FullName.Create(firstName, middleName, lastName);
+
+        if (fullName.IsFailure)
+        {
+            return Result.Failure<Volunteer>("FullName is not valid");
+        }
+
         return new Volunteer(
             id,
-            firstName,
-            middleName,
-            lastName,
+            fullName.Value,
             email,
             experience
             );

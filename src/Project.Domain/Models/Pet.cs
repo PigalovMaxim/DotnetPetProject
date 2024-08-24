@@ -19,8 +19,8 @@ public class Pet: Shared.Entity<PetId>
         string breed,
         string color,
         string healthInfo,
-        int weight,
-        int height,
+        double weight,
+        double height,
         string phone,
         bool isNeutered,
         DateTime birthday,
@@ -55,8 +55,8 @@ public class Pet: Shared.Entity<PetId>
     public string Color { get; private set; } = default!;
     public string HealthInfo { get; private set; } = default!;
     public string Address { get; private set; } = default!;
-    public int Weight { get; private set; } = default!;
-    public int Height { get; private set; } = default!;
+    public double Weight { get; private set; } = default!;
+    public double Height { get; private set; } = default!;
     public string Phone { get; private set; } = default!;
     public bool IsNeutered { get; private set; } = default!;
     public DateTime Birthday { get; private set; } = default!;
@@ -74,8 +74,8 @@ public class Pet: Shared.Entity<PetId>
         string breed,
         string color,
         string healthInfo,
-        int weight,
-        int height,
+        double weight,
+        double height,
         string phone,
         bool isNeutered,
         DateTime birthday,
