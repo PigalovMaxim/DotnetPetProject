@@ -20,18 +20,6 @@ public class VolunteersConfiguration : IEntityTypeConfiguration<Volunteer>
                 value => VolunteerId.Create(value)
             );
 
-        builder.Property(p => p.FirstName)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_TITLE_SIZE);
-
-        builder.Property(p => p.MiddleName)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_TITLE_SIZE);
-
-        builder.Property(p => p.LastName)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_TITLE_SIZE);
-
         builder.Property(p => p.Email)
             .IsRequired()
             .HasMaxLength(Constants.MAX_TITLE_SIZE);
@@ -53,6 +41,23 @@ public class VolunteersConfiguration : IEntityTypeConfiguration<Volunteer>
                 .HasMaxLength(Constants.MAX_DESCRIPTION_SIZE);
         });
 
+        builder.OwnsOne(v => v.FullName, vb =>
+        {
+            vb.ToJson();
+
+            vb.Property(p => p.FirstName)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_TITLE_SIZE);
+
+            vb.Property(p => p.MiddleName)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_TITLE_SIZE);
+
+            vb.Property(p => p.LastName)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_TITLE_SIZE);
+        });
+
         builder.OwnsMany(v => v.Socials, vb =>
         {
             vb.ToJson();
@@ -64,5 +69,8 @@ public class VolunteersConfiguration : IEntityTypeConfiguration<Volunteer>
             vb.Property(vs => vs.Link)
                 .IsRequired();
         });
+
+        builder
+            .HasMany(v => v.Pets);
     }
 }

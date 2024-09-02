@@ -2,6 +2,7 @@
 using Project.Domain.Models.ModelsId;
 using Project.Domain.Shared;
 using Project.Domain.ValueObjects;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Domain.Models;
 
@@ -28,7 +29,8 @@ public class Pet: Shared.Entity<PetId>
         PetHelpStatus helpStatus,
         List<Requisite> requisites,
         List<PetPhoto> photos,
-        DateTime dateCreate
+        DateTime dateCreate,
+        PetEntitiesKeys petKeys
         ) : base(id)
     {
         Name = name;
@@ -47,6 +49,7 @@ public class Pet: Shared.Entity<PetId>
         _requisites = requisites;
         _photos = photos;
         DateCreate = dateCreate;
+        PetEntitiesKeys = petKeys;
     }
     public string Name { get; private set; } = default!;
     public string Species { get; private set; } = default!;
@@ -61,6 +64,9 @@ public class Pet: Shared.Entity<PetId>
     public bool IsNeutered { get; private set; } = default!;
     public DateTime Birthday { get; private set; } = default!;
     public bool IsVaccinated { get; private set; } = default!;
+
+    [NotMapped]
+    public PetEntitiesKeys PetEntitiesKeys { get; private set; } = default!;
     public PetHelpStatus HelpStatus { get; private set; } = default!;
     public List<Requisite> Requisites => _requisites;
     public List<PetPhoto> Photos => _photos;
@@ -83,7 +89,8 @@ public class Pet: Shared.Entity<PetId>
         PetHelpStatus helpStatus,
         List<Requisite> requisites,
         List<PetPhoto> photos,
-        DateTime dateCreate
+        DateTime dateCreate,
+        PetEntitiesKeys petKeys
         )
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -148,7 +155,8 @@ public class Pet: Shared.Entity<PetId>
             helpStatus,
             requisites,
             photos,
-            dateCreate
+            dateCreate,
+            petKeys
             );
     }
 }

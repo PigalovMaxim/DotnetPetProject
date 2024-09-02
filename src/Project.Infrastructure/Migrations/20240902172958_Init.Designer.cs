@@ -12,8 +12,8 @@ using Project.Infrastructure;
 namespace Project.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240823194108_Initial")]
-    partial class Initial
+    [Migration("20240902172958_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,10 +25,34 @@ namespace Project.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Project.Domain.Models.Breed", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("SpeciesId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("speciesId");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pK_breeds");
+
+                    b.HasIndex("SpeciesId")
+                        .HasDatabaseName("iX_breeds_speciesId");
+
+                    b.ToTable("breeds", (string)null);
+                });
+
             modelBuilder.Entity("Project.Domain.Models.Pet", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -70,9 +94,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("healthInfo");
 
-                    b.Property<int>("Height")
+                    b.Property<double>("Height")
                         .HasMaxLength(250)
-                        .HasColumnType("integer")
+                        .HasColumnType("double precision")
                         .HasColumnName("height");
 
                     b.Property<int>("HelpStatus")
@@ -109,24 +133,41 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("volunteerId");
 
-                    b.Property<int>("Weight")
+                    b.Property<double>("Weight")
                         .HasMaxLength(120)
-                        .HasColumnType("integer")
+                        .HasColumnType("double precision")
                         .HasColumnName("weight");
 
                     b.HasKey("Id")
-                        .HasName("pK_pet");
+                        .HasName("pK_pets");
 
                     b.HasIndex("VolunteerId")
-                        .HasDatabaseName("iX_pet_volunteerId");
+                        .HasDatabaseName("iX_pets_volunteerId");
 
-                    b.ToTable("pet", (string)null);
+                    b.ToTable("pets", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Domain.Models.Species", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pK_species");
+
+                    b.ToTable("species", (string)null);
                 });
 
             modelBuilder.Entity("Project.Domain.Models.Volunteer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -141,28 +182,18 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("experience");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("firstName");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("lastName");
-
-                    b.Property<string>("MiddleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("middleName");
-
                     b.HasKey("Id")
                         .HasName("pK_volunteers");
 
                     b.ToTable("volunteers", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Domain.Models.Breed", b =>
+                {
+                    b.HasOne("Project.Domain.Models.Species", null)
+                        .WithMany("Breeds")
+                        .HasForeignKey("SpeciesId")
+                        .HasConstraintName("fK_breeds_species_speciesId");
                 });
 
             modelBuilder.Entity("Project.Domain.Models.Pet", b =>
@@ -170,7 +201,7 @@ namespace Project.Infrastructure.Migrations
                     b.HasOne("Project.Domain.Models.Volunteer", null)
                         .WithMany("Pets")
                         .HasForeignKey("VolunteerId")
-                        .HasConstraintName("fK_pet_volunteers_volunteerId");
+                        .HasConstraintName("fK_pets_volunteers_volunteerId");
 
                     b.OwnsMany("Project.Domain.ValueObjects.Requisite", "Requisites", b1 =>
                         {
@@ -192,15 +223,15 @@ namespace Project.Infrastructure.Migrations
                                 .HasColumnType("character varying(100)");
 
                             b1.HasKey("PetId", "Id")
-                                .HasName("pK_pet");
+                                .HasName("pK_pets");
 
-                            b1.ToTable("pet");
+                            b1.ToTable("pets");
 
                             b1.ToJson("requisites");
 
                             b1.WithOwner()
                                 .HasForeignKey("PetId")
-                                .HasConstraintName("fK_pet_pet_PetId");
+                                .HasConstraintName("fK_pets_pets_PetId");
                         });
 
                     b.OwnsMany("Project.Domain.ValueObjects.PetPhoto", "Photos", b1 =>
@@ -221,13 +252,13 @@ namespace Project.Infrastructure.Migrations
 
                             b1.HasKey("PetId", "Id");
 
-                            b1.ToTable("pet");
+                            b1.ToTable("pets");
 
                             b1.ToJson("photos");
 
                             b1.WithOwner()
                                 .HasForeignKey("PetId")
-                                .HasConstraintName("fK_pet_pet_PetId");
+                                .HasConstraintName("fK_pets_pets_PetId");
                         });
 
                     b.Navigation("Photos");
@@ -267,6 +298,37 @@ namespace Project.Infrastructure.Migrations
                                 .HasConstraintName("fK_volunteers_volunteers_VolunteerId");
                         });
 
+                    b.OwnsOne("Project.Domain.ValueObjects.FullName", "FullName", b1 =>
+                        {
+                            b1.Property<Guid>("VolunteerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<string>("MiddleName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.HasKey("VolunteerId");
+
+                            b1.ToTable("volunteers");
+
+                            b1.ToJson("fullName");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VolunteerId")
+                                .HasConstraintName("fK_volunteers_volunteers_id");
+                        });
+
                     b.OwnsMany("Project.Domain.ValueObjects.SocialMedia", "Socials", b1 =>
                         {
                             b1.Property<Guid>("VolunteerId")
@@ -296,9 +358,17 @@ namespace Project.Infrastructure.Migrations
                                 .HasConstraintName("fK_volunteers_volunteers_VolunteerId");
                         });
 
+                    b.Navigation("FullName")
+                        .IsRequired();
+
                     b.Navigation("Requisites");
 
                     b.Navigation("Socials");
+                });
+
+            modelBuilder.Entity("Project.Domain.Models.Species", b =>
+                {
+                    b.Navigation("Breeds");
                 });
 
             modelBuilder.Entity("Project.Domain.Models.Volunteer", b =>

@@ -1,24 +1,20 @@
 ﻿using CSharpFunctionalExtensions;
+using Project.Domain.Models.ModelsId;
 
 namespace Project.Domain.ValueObjects;
 
-public record PetPhoto
+public record PetEntitiesKeys
 {
-    private PetPhoto(string path, bool isMain)
+    private PetEntitiesKeys(Guid BreedId, SpeciesId SpeciesId)
     {
-        Path = path;
-        IsMain = isMain;
+        BreedId = BreedId;
+        SpeciesId = SpeciesId;
     }
-    public string Path { get; } = default!;
-    public bool IsMain { get; } = default!;
+    public Guid BreedId { get; private set; } = default!;
+    public SpeciesId SpeciesId { get; private set; }
 
-    public static Result<PetPhoto> Create(string path, bool isMain)
+    public static Result<PetEntitiesKeys> Create(Guid BreedId, SpeciesId SpeciesId)
     {
-        if(string.IsNullOrWhiteSpace(path))
-        {
-            return Result.Failure<PetPhoto>("Path to photo cannot be empty");
-        }
-
-        return new PetPhoto(path, isMain);
+        return new PetEntitiesKeys(BreedId, SpeciesId);
     }
 }
